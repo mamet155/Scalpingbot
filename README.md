@@ -1,5 +1,3 @@
----
-
 🧠 Scalpingbot — Binance Futures M1
 
 Bot scalping otomatis untuk Binance Futures dengan sistem aman karena:
