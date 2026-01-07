@@ -1,4 +1,3 @@
-
 import os, sys, time, signal
 from env_loader import load_keys
 
@@ -61,6 +60,7 @@ from api import (
 from config import (
     SYMBOLS, STOP_LOSS_PCT,
     TRAILING_EX_START_PCT, TRAILING_CALLBACK_PCT,
+    TRAIL_START_PCT, TRAIL_DROP_PCT,
     CHECK_INTERVAL, MIN_CANDLE_MOVE
 )
 from mode import MODE_NAME
@@ -115,7 +115,9 @@ def open_trade(symbol, side):
         "side": side,
         "entry": price,
         "qty": qty,
-        "trailing_set": False
+        "trailing_set": False,
+        "peak_profit": 0.0,
+        "logic_trail_on": False
     }
 
 def check_trailing(symbol):
@@ -127,7 +129,35 @@ def check_trailing(symbol):
     if (not p["trailing_set"]) and pnl_ratio >= TRAILING_EX_START_PCT:
         place_trailing_stop(symbol, side, TRAILING_CALLBACK_PCT)
         p["trailing_set"] = True
-        log(f"🔐 TRAILING AKTIF {symbol} | Profit ≥ {int(TRAILING_EX_START_PCT*100)}%")
+        log(f"🔐 TRAILING EXCHANGE AKTIF {symbol} | Profit ≥ {int(TRAILING_EX_START_PCT*100)}%")
+
+def check_logic_trailing(symbol):
+    p = positions[symbol]
+    now = get_price(symbol)
+    entry = p["entry"]
+    side = p["side"]
+
+    profit_pct = (now-entry)/entry if side=="BUY" else (entry-now)/entry
+
+    # aktifkan logic trailing saat profit >= 10%
+    if (not p["logic_trail_on"]) and profit_pct >= TRAIL_START_PCT:
+        p["logic_trail_on"] = True
+        p["peak_profit"] = profit_pct
+        log(f"🔄 LOGIC TRAILING ON {symbol} @ {profit_pct*100:.2f}%")
+
+    # update peak & cek auto close
+    if p["logic_trail_on"]:
+        if profit_pct > p["peak_profit"]:
+            p["peak_profit"] = profit_pct
+
+        # auto close jika turun 20% dari peak
+        if profit_pct <= p["peak_profit"] * (1 - TRAIL_DROP_PCT):
+            log(
+                f"🔐 AUTO CLOSE {symbol} | "
+                f"Now:{profit_pct*100:.2f}% Peak:{p['peak_profit']*100:.2f}%"
+            )
+            close_position(symbol, side, p["qty"])
+            positions.pop(symbol, None)
 
 def main_loop():
     while True:
@@ -139,7 +169,8 @@ def main_loop():
                     continue
                 open_trade(s, sig)
             else:
-                check_trailing(s)
+                check_trailing(s)        # fitur lama (exchange trailing)
+                check_logic_trailing(s) # fitur baru (logic trailing + auto close)
         time.sleep(CHECK_INTERVAL)
 
 if __name__ == "__main__":
