@@ -32,7 +32,8 @@ pkg update pkg install python git -y pip install requests
 
 ### 2. Clone repo
 
-git clone https://github.com/mamet155/Bot_scalping_future_binancem1.git cd Bot_scalping_future_binancem1
+gitclone https://github.com/mamet155/Scalpingbot.git
+cd Scalpingbot cd Bot_scalping_future_binancem1
 
 ### 3. Setup API (pakai ENV)
 
