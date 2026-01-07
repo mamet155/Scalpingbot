@@ -1,59 +1,184 @@
-# scalpingbot
+---
 
-Bot scalping futures Binance versi M1.
-Auto open posisi market dengan:
-- Stop Loss otomatis di exchange
-- Trailing profit di exchange (aman walau bot mati)
-- Support isolated margin
-- Bisa pilih DEMO / REAL di awal
+🧠 Scalpingbot — Binance Futures M1
+
+Bot scalping otomatis untuk Binance Futures dengan sistem aman karena:
+Stop Loss & Trailing dipasang langsung di exchange (bukan cuma di bot).
 
 ⚠️ Gunakan dengan risiko sendiri.
 
----
-
-## Fitur
-- Market order otomatis
-- Stop Loss exchange (-20% dari margin)
-- Trailing profit exchange  
-  - aktif mulai profit +10%  
-  - trailing jarak 5%
-- Isolated margin
-- Pilih leverage & margin saat start
-- Aman walau bot mati (SL & trailing di server Binance)
-- Log langsung di Termux
 
 ---
 
-## Cara Pakai (Termux dari nol)
+🚀 Fitur Utama
 
-### 1. Install bahan
+✅ Market order otomatis
 
-pkg update pkg install python git -y pip install requests
+✅ Stop Loss di exchange
 
-### 2. Clone repo
+default: -20% dari margin
 
-gitclone https://github.com/mamet155/Scalpingbot.git
+
+✅ Trailing Profit di exchange
+
+aktif saat profit +10%
+
+jarak trailing 5%
+
+
+✅ Isolated margin
+
+✅ Pilih DEMO / REAL saat start
+
+✅ Pilih leverage & margin saat start
+
+✅ Aman walau bot mati (SL & trailing tetap jalan)
+
+✅ Log langsung di Termux
+
+
+
+---
+
+📦 Struktur File
+
+Scalpingbot/
+│
+├── main.py        # core bot
+├── api.py         # koneksi ke Binance
+├── config.py      # pair & setting default
+├── env_loader.py  # loader .env
+├── mode.py        # demo / real switch
+├── .gitignore
+└── README.md
+
+
+---
+
+🛠 Cara Pakai (Termux dari nol)
+
+1️⃣ Install bahan
+
+pkg update
+pkg install python git -y
+pip install requests python-dotenv
+
+
+---
+
+2️⃣ Clone repo
+
+git clone https://github.com/mamet155/Scalpingbot.git
 cd Scalpingbot
 
-### 3. Setup API (pakai ENV)
 
-export BINANCE_API_KEY="API_KEY_KAMU" export BINANCE_API_SECRET="API_SECRET_KAMU"
+---
 
-### 4. Jalankan bot
+3️⃣ Setup API (aman pakai ENV)
+
+Untuk DEMO
+
+nano .env.demo
+
+Isi:
+
+API_KEY=ISI_API_KEY_TESTNET
+API_SECRET=ISI_API_SECRET_TESTNET
+
+Untuk REAL
+
+nano .env.real
+
+Isi:
+
+API_KEY=ISI_API_KEY_REAL
+API_SECRET=ISI_API_SECRET_REAL
+
+
+---
+
+4️⃣ Jalankan bot
 
 python main.py
 
-Nanti bot akan tanya:
-- Pilih DEMO / REAL
-- Leverage
-- Margin per posisi
 
 ---
 
-## Catatan
-- Jangan pakai dana besar dulu
-- Test di DEMO dulu
-- Futures = high risk
+🎮 Alur Saat Bot Start
+
+1. Pilih mode:
+
+demo  → TESTNET
+real  → AKUN ASLI
+
+
+2. Masukkan:
+
+Leverage (contoh: 10, 20, 50, 100)
+
+Margin per trade (USDT)
+
+
+
+3. Bot akan:
+
+set isolated
+
+set leverage
+
+buka posisi market
+
+pasang SL & trailing di exchange
+
+
+
+
+
+---
+
+🔐 Keamanan
+
+API tidak disimpan di kode
+
+Pakai file .env
+
+.env sudah di-ignore oleh git
+
+Aman share repo tanpa bocor API
+
+
+
+---
+
+🧪 Mode DEMO dulu!
+
+Wajib test di TESTNET sebelum pakai uang asli.
+
+
+---
+
+🧾 Catatan Penting
+
+Bot ini scalping agresif
+
+Cocok untuk:
+
+akun kecil
+
+eksperimen
+
+latihan automation
+
+
+Bukan holy grail, tetap perlu:
+
+manajemen risiko
+
+mental kuat
+
+siap loss
+
+
 
 
 ---
